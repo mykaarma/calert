@@ -1,9 +1,14 @@
 FROM ubuntu:22.04
-RUN apt-get -y update && apt install -y ca-certificates
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY calert.bin .
+COPY cmd/calert.bin .
 COPY static/ /app/static/
 COPY config.sample.toml config.toml
 
