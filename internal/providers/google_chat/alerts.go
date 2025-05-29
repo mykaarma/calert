@@ -30,7 +30,59 @@ type AlertDetails struct {
 // Text message in Google Chat Webhook endpoint.
 // https://developers.google.com/chat/api/guides/message-formats/basic
 type ChatMessage struct {
+	Text  string                   `json:"text"`
+	Cards []map[string]interface{} `json:"cards,omitempty"`
+}
+
+type CardMessage struct {
+	Cards []Card `json:"cards"`
+}
+
+type Card struct {
+	Header   *Header   `json:"header,omitempty"`
+	Sections []Section `json:"sections"`
+}
+
+type Header struct {
+	Title    string `json:"title,omitempty"`
+	Subtitle string `json:"subtitle,omitempty"`
+}
+
+type Section struct {
+	Widgets []Widget `json:"widgets"`
+}
+
+type Widget struct {
+	TextParagraph *TextParagraph `json:"textParagraph,omitempty"`
+	KeyValue      *KeyValue      `json:"keyValue,omitempty"`
+	Buttons       []ButtonWidget `json:"buttons,omitempty"`
+}
+
+type TextParagraph struct {
 	Text string `json:"text"`
+}
+
+type KeyValue struct {
+	TopLabel         string `json:"topLabel"`
+	Content          string `json:"content"`
+	ContentMultiline bool   `json:"contentMultiline"`
+}
+
+type ButtonWidget struct {
+	TextButton TextButton `json:"textButton"`
+}
+
+type TextButton struct {
+	Text    string  `json:"text"`
+	OnClick OnClick `json:"onClick"`
+}
+
+type OnClick struct {
+	OpenLink OpenLink `json:"openLink"`
+}
+
+type OpenLink struct {
+	URL string `json:"url"`
 }
 
 // add adds an alert to the active alerts map.

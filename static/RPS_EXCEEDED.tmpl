@@ -1,0 +1,57 @@
+{{ define "googlechat.custom.message" }}
+{
+  "cards": [
+    {
+      "header": {
+        "title": "{{ .Status | toUpper | js }}",
+        "subtitle": "{{ .Labels.service | printf "Service: %s" | js }}",
+        "imageUrl": "{{ "https://www.google.com/s2/favicons?domain=prometheus.io" | js }}",
+        "imageStyle": "IMAGE"
+      },
+      "sections": [
+        {
+          "widgets": [
+            {
+              "keyValue": {
+                "topLabel": "Alert Name",
+                "content": "{{ .Labels.alertname | js }}"
+              }
+            },
+            {{ if .Labels.route }}
+            {
+              "keyValue": {
+                "topLabel": "Route",
+                "content": "{{ .Labels.route | js }}"
+              }
+            },
+            {{ end }}
+            {
+              "keyValue": {
+                "topLabel": "Summary",
+                "content": "{{ .Annotations.summary | js }}"
+              }
+            },
+            {
+              "keyValue": {
+                "topLabel": "Description",
+                "content": "{{ .Annotations.description | js }}"
+              }
+            },
+            {{ if .Labels.severity }}
+            {
+              "keyValue": {
+                "topLabel": "Severity",
+                "content": "{{ .Labels.severity | toUpper | js }}"
+              }
+            }
+            {{ end }}
+            {{ if .GeneratorURL }}
+
+            {{ end }}
+          ]
+        }
+      ]
+    }
+  ]
+}
+{{ end }}

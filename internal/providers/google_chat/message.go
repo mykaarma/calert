@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 
 	alertmgrtmpl "github.com/prometheus/alertmanager/template"
 )
@@ -21,33 +20,33 @@ const (
 // G-Chat Webhook API
 func (m *GoogleChatManager) prepareMessage(alert alertmgrtmpl.Alert) ([]ChatMessage, error) {
 	var (
-		str strings.Builder
 		to  bytes.Buffer
 		msg ChatMessage
 	)
 
 	messages := make([]ChatMessage, 0)
 
-	// Render a template with alert data.
-	err := m.msgTmpl.Execute(&to, alert)
+	// Render template
+	err := m.msgTmpl.ExecuteTemplate(&to, "googlechat.custom.message", alert)
 	if err != nil {
 		m.lo.Error("Error parsing values in template", "error", err)
 		return messages, err
 	}
 
-	// Split the message if it exceeds the limit.
-	if (len(str.String()) + len(to.String())) >= maxMsgSize {
-		msg.Text = str.String()
-		messages = append(messages, msg)
-		str.Reset()
+	// Log the output for debugging
+	rendered := to.String()
+	m.lo.Info("Rendered template output", "content", rendered)
+
+	// Parse JSON
+	var cards map[string]interface{}
+	if err := json.Unmarshal(to.Bytes(), &cards); err != nil {
+		m.lo.Error("invalid card JSON", "error", err)
+		return messages, err
 	}
 
-	// Convert the template bytes to string.
-	str.WriteString(to.String())
-	str.WriteString("\n")
-	msg.Text = str.String()
-
-	// Add the message to batch.
+	// Set the message
+	msg.Cards = []map[string]interface{}{cards}
+	m.lo.Info("message card to be sent", msg.Cards[0])
 	messages = append(messages, msg)
 
 	return messages, nil
@@ -55,8 +54,13 @@ func (m *GoogleChatManager) prepareMessage(alert alertmgrtmpl.Alert) ([]ChatMess
 
 // sendMessage pushes out a notification to Google Chat space.
 func (m *GoogleChatManager) sendMessage(msg ChatMessage, threadKey string) error {
-	out, err := json.Marshal(msg)
-	if err != nil {
+	// out, err := json.Marshal(msg)
+	// if err != nil {
+	// 	return err
+	// }
+
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(msg.Cards[0]); err != nil {
 		return err
 	}
 
@@ -77,7 +81,7 @@ func (m *GoogleChatManager) sendMessage(msg ChatMessage, threadKey string) error
 	endpoint := u.String()
 
 	// Prepare the request.
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(out))
+	req, err := http.NewRequest("POST", endpoint, buf)
 	if err != nil {
 		return err
 	}
@@ -107,7 +111,7 @@ func (m *GoogleChatManager) sendMessage(msg ChatMessage, threadKey string) error
 		responseBody := string(bodyBytes)
 
 		// Log the status code and response body at the debug level
-		m.lo.Debug("Non OK HTTP Response received from Google Chat Webhook endpoint", "status", resp.StatusCode, "responseBody", responseBody)
+		m.lo.Error("Non OK HTTP Response received from Google Chat Webhook endpoint", "status", resp.StatusCode, "responseBody", responseBody)
 
 		// Since the body has been read, if you need to use it later,
 		// you may need to reassign resp.Body with a new reader

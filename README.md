@@ -38,7 +38,7 @@ Here's an example `docker-compose` config with a custom `message.tmpl` mounted i
     ports:
       - "6000:6000"
     volumes:
-      - ./message.tmpl:/etc/calert/message.tmpl
+      - ./RPS_EXCEEDED.tmpl:/etc/calert/RPS_EXCEEDED.tmpl
 ```
 
 #### Custom Configuration 
