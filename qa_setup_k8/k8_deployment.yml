@@ -68,5 +68,6 @@ spec:
             path: /var/log/calert
       nodeSelector:
         cluster: prometheus
+        kubernetes.io/arch: arm64
 
 
