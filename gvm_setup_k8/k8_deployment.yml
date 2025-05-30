@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calert
+  namespace: ingress-dms
+  labels:
+    app: calert
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calert
+  template:
+    metadata:
+      labels:
+        app: calert
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+            - name: dockercred
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        readOnlyRootFilesystem: true
+      containers:
+        - name: calert
+          image: "578061096415.dkr.ecr.us-east-1.amazonaws.com/calert:1.0.0"
+          imagePullPolicy: Always
+          args:
+            - "--config=/app/static/config.toml"
+          securityContext:
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"]
+          ports:
+            - containerPort: 6000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/static/
+              name: config-dir
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+                - name: X-Causation-ID
+                  value: kube-health
+              path: "/ping"
+              port: 6000
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+                - name: X-Causation-ID
+                  value: kube-health
+              path: "/ping"
+              port: 6000
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: "20m"
+              memory: "48Mi"
+            requests:
+              cpu: "5m"
+              memory: "24Mi"
+      volumes:
+        - name: config-dir
+          hostPath:
+            path: /vol1/calert
+      nodeSelector:
+        cluster: prometheus
+
+

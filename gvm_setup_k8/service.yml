@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service # Added: Specifies the kind of resource
+metadata:
+  name: "calert-svc"
+  namespace: ingress-dms
+spec:
+  type: NodePort # Added: Specifies the type of service
+  ports:
+    - port: 6000      # Port on the internal ClusterIP of the service
+      targetPort: 6000  # Port on your pods that the service will forward traffic to
+        # nodePort: 6000 # Removed: 6000 is not in the typical NodePort range (30000-32767).
+        # Kubernetes will automatically assign a valid NodePort if this line is omitted.
+      # If you need a specific NodePort, choose one from the valid range.
+      protocol: TCP
+  selector:
+    app: calert # This selects pods with the label "app: calert"
