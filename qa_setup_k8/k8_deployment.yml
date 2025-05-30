@@ -19,11 +19,6 @@ spec:
       terminationGracePeriodSeconds: 30
       imagePullSecrets:
             - name: dockercred
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 1001
-        readOnlyRootFilesystem: true
       containers:
         - name: calert
           image: "578061096415.dkr.ecr.us-east-1.amazonaws.com/calert:1.0.2"
