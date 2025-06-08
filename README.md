@@ -50,12 +50,12 @@ Here's an example `docker-compose` config with a custom `config.toml` mounted in
     ports:
       - "6000:6000"
     volumes:
-      - ./config.toml:/app/config.sample.toml
+      - ./config.toml:/app/config.toml
 ```
 
 ### Configuration
 
-Refer to [config.sample.toml](./config.sample.toml) for instructions on how to configure `calert`.
+Refer to [config.sample.toml](./config.toml) for instructions on how to configure `calert`.
 
 All the config variables can also be supplied as Environment Variables by prefixing `CALERT_` and replacing `.` (_period_) with `__` (_double underscores_).
 
@@ -142,7 +142,7 @@ A few notes on `v2` migration:
 
 ### Config schema changes
 
-`v2` is a complete rewrite from scratch and **is a breaking release**. The configuration has changed extensively. Please refer to latest [`config.sample.toml`](config.sample.toml) for a complete working example of the config.
+`v2` is a complete rewrite from scratch and **is a breaking release**. The configuration has changed extensively. Please refer to latest [`config.sample.toml`](config.toml) for a complete working example of the config.
 
 ### Dry Run Mode
 

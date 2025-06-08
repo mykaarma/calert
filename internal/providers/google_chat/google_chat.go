@@ -27,6 +27,7 @@ type GoogleChatManager struct {
 	msgTmpl         *template.Template
 	dryRun          bool
 	threadedReplies bool
+	prometheusHost  string
 }
 
 type GoogleChatOpts struct {
@@ -41,6 +42,7 @@ type GoogleChatOpts struct {
 	Template        string
 	ThreadTTL       time.Duration
 	ThreadedReplies bool
+	PrometheusHost  string
 }
 
 // NewGoogleChat initializes a Google Chat provider object.
@@ -102,6 +104,7 @@ func NewGoogleChat(opts GoogleChatOpts) (*GoogleChatManager, error) {
 		msgTmpl:         tmpl,
 		dryRun:          opts.DryRun,
 		threadedReplies: opts.ThreadedReplies,
+		prometheusHost:  opts.PrometheusHost,
 	}
 	// Start a background worker to cleanup alerts based on TTL mechanism.
 	go mgr.activeAlerts.startPruneWorker(1*time.Hour, opts.ThreadTTL)
@@ -113,14 +116,25 @@ func NewGoogleChat(opts GoogleChatOpts) (*GoogleChatManager, error) {
 func (m *GoogleChatManager) Push(alerts []alertmgrtmpl.Alert) error {
 	m.lo.Info("dispatching alerts to google chat", "count", len(alerts))
 
+
 	// For each alert, lookup the UUID and send the alert.
 	for _, a := range alerts {
 		// If it's a new alert whose fingerprint isn't in the active alerts map, add it first.
 		if m.activeAlerts.loookup(a.Fingerprint) == "" {
 			m.activeAlerts.add(a)
 		}
+		originalURL := a.GeneratorURL
 
-		// Prepare a list of messages to send.
+        parsedURL, err := url.Parse(originalURL)
+        if err != nil {
+        		panic(err)
+        }
+
+
+        // Replace the host using the value from the configuration
+        parsedURL.Host = m.prometheusHost
+        modifiedURL := parsedURL.String()
+        a.GeneratorURL = modifiedURL
 		msgs, err := m.prepareMessage(a)
 		if err != nil {
 			m.lo.Error("error preparing message", "error", err)

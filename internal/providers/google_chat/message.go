@@ -46,7 +46,7 @@ func (m *GoogleChatManager) prepareMessage(alert alertmgrtmpl.Alert) ([]ChatMess
 
 	// Set the message
 	msg.Cards = []map[string]interface{}{cards}
-	m.lo.Info("message card to be sent", msg.Cards[0])
+	m.lo.Info("message card to be sent","msg", msg.Cards[0])
 	messages = append(messages, msg)
 
 	return messages, nil

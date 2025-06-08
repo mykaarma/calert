@@ -26,7 +26,7 @@ type App struct {
 
 func main() {
 	// Initialise and load the config.
-	ko, err := initConfig("config.sample.toml", "CALERT_")
+	ko, err := initConfig("config.toml", "CALERT_")
 	if err != nil {
 		panic(err.Error())
 	}

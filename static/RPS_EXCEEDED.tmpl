@@ -43,11 +43,34 @@
                 "topLabel": "Severity",
                 "content": "{{ .Labels.severity | toUpper | js }}"
               }
-            }
-            {{ end }}
-            {{ if .GeneratorURL }}
+            },
 
             {{ end }}
+            {{ if .StartsAt }}
+            {
+              "keyValue": {
+                "topLabel": "Started At",
+                "content": "{{ .StartsAt | js }}"
+              }
+            },
+            {{ end }}
+            {{ if .EndsAt }}
+            {
+              "keyValue": {
+                "topLabel": "Ended At",
+                "content": "{{ .EndsAt | js }}"
+              }
+            },
+            {{ end }}
+            {{ if .GeneratorURL }}
+            {
+                "keyValue": {
+                    "topLabel": "View in Prometheus",
+                     "content": "<a href='{{ .GeneratorURL | js }}'>{{ .GeneratorURL | js }}</a>"
+                }
+            }
+            {{ end }}
+
           ]
         }
       ]

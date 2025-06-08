@@ -106,6 +106,7 @@ func initProviders(ko *koanf.Koanf, lo *slog.Logger, metrics *metrics.Manager) (
 					ThreadedReplies: ko.Bool(fmt.Sprintf("%s.threaded_replies", cfgKey)),
 					Metrics:         metrics,
 					DryRun:          ko.Bool(fmt.Sprintf("%s.dry_run", cfgKey)),
+					PrometheusHost:  ko.MustString(fmt.Sprintf("%s.prometheus_host", cfgKey)),
 				},
 			)
 			if err != nil {
