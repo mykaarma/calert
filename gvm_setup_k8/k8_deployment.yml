@@ -29,7 +29,7 @@ spec:
           image: "578061096415.dkr.ecr.us-east-1.amazonaws.com/calert:1.0.0"
           imagePullPolicy: Always
           args:
-            - "--config=/app/static/config.toml"
+            - "--config=/app/config.toml"
           securityContext:
             capabilities:
               drop: ["ALL"]
