@@ -1,4 +1,4 @@
-1. build the binary: GOOS=linux GOARCH=amd64 go build -o cmd/calert.bin ./cmd
+1. build the binary: GOOS=linux GOARCH=arm64 go build -o cmd/calert.bin ./cmd
 2. docker build -t calert:latest .
 3. docker run -p 6000:6000 --name calert -v $(pwd)/config.toml:/app/config calert:latest --config=./config.toml
 
