@@ -22,7 +22,7 @@ WORKDIR /app
 
 COPY cmd/calert.bin .
 COPY static/ /app/static/
-COPY config.toml config.toml
+COPY config.toml .
 
 ARG CALERT_GID="999"
 ARG CALERT_UID="999"
