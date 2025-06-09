@@ -24,7 +24,7 @@ spec:
           image: "578061096415.dkr.ecr.us-east-1.amazonaws.com/calert:1.0.2"
           imagePullPolicy: Always
           args:
-            - "--config=/app/static/config.toml"
+            - "--config=/app/config.toml"
           securityContext:
             capabilities:
               drop: ["ALL"]
@@ -32,9 +32,6 @@ spec:
           ports:
             - containerPort: 6000
               protocol: TCP
-          volumeMounts:
-            - mountPath: /app/static/
-              name: config-dir
           livenessProbe:
             httpGet:
               httpHeaders:
@@ -62,10 +59,6 @@ spec:
             requests:
               cpu: "1000m"
               memory: "1024Mi"
-      volumes:
-        - name: config-dir
-          hostPath:
-            path: /var/log/calert
       nodeSelector:
         cluster: prometheus
         kubernetes.io/arch: arm64
