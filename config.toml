@@ -15,7 +15,18 @@ threaded_replies = false # Whether to send threaded replies or not.
 dry_run = false
 prometheus_host= "eks-prometheus.mykaarma.com"
 
-[providers.qa_payment_alerts]
+[providers.qa_payment_alerts_warn]
+type = "google_chat" # Type of provider. Currently supported value is `google_chat`.
+endpoint = "https://chat.googleapis.com/v1/spaces/AAAAoZzJNHc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TwrKfnbIzQ_yskm-GSYbj-T3oNEohFsXXShbkIj1f7I" # Google Chat Webhook URL
+max_idle_conns =  50 # Max idle connections in the HTTP Client.
+timeout = "30s" # Timeout for making requests to Provider.
+template = "static/RPS_EXCEEDED.tmpl" # Path to specify the message template path.
+thread_ttl = "12h" # Timeout to keep active alerts in memory. Once this TTL expires, a new thread will be created.
+threaded_replies = false # Whether to send threaded replies or not.
+dry_run = false
+prometheus_host= "qa-eks-prometheus.mykaarma.com"
+
+[providers.qa_payment_alerts_crtical]
 type = "google_chat" # Type of provider. Currently supported value is `google_chat`.
 endpoint = "https://chat.googleapis.com/v1/spaces/AAAANoBANpo/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=UTMgJT3SGgOIJRH8vxIN-FBh42VxoSh_qrOvPD8lMvc" # Google Chat Webhook URL
 max_idle_conns =  50 # Max idle connections in the HTTP Client.
@@ -25,4 +36,3 @@ thread_ttl = "12h" # Timeout to keep active alerts in memory. Once this TTL expi
 threaded_replies = false # Whether to send threaded replies or not.
 dry_run = false
 prometheus_host= "qa-eks-prometheus.mykaarma.com"
-# Prometheus host URL to query for alert details.
