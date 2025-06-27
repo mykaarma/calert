@@ -54,7 +54,7 @@
               }
             },
             {{ end }}
-           {{ if and .EndsAt (eq (toUpper .Status) "FIRING") }}
+           {{ if and .EndsAt (eq (toUpper .Status) "RESOLVED") }}
            {
               "keyValue": {
                "topLabel": "Ended At",
