@@ -10,7 +10,6 @@ import (
 	"strings"
 	"text/template"
 	"time"
-
 	"github.com/mr-karan/calert/internal/metrics"
 	alertmgrtmpl "github.com/prometheus/alertmanager/template"
 	"golang.org/x/text/cases"
